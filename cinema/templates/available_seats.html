@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <title>صندلی‌های موجود</title>
+    <style>
+        .seat {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            margin: 5px;
+            text-align: center;
+            line-height: 40px;
+            border-radius: 5px;
+            background-color: #90ee90; /* سبز (آزاد) */
+        }
+        .reserved {
+            background-color: #ff6961; /* قرمز (رزرو شده) */
+        }
+        .pending {
+            background-color: #ffd700; /* زرد (در انتظار پرداخت) */
+        }
+        .cancelled {
+            background-color: #90ee90; /* برگشت به سبز (آزاد) */
+        }
+    </style>
+</head>
+<body>
+    <h1>صندلی‌های موجود برای: {{ show_time.movie.name }} - {{ show_time.start_time }}</h1>
+
+    <div id="seats">
+        {% for seat in seats %}
+            <div class="seat" id="seat-{{ seat.id }}">
+                {{ seat.row }}-{{ seat.number }}
+            </div>
+        {% endfor %}
+    </div>
+
+    <script>
+        // اتصال به WebSocket
+        const showtimeId = "{{ show_time.id }}";
+        const socket = new WebSocket(
+            "ws://" + window.location.host + "/ws/showtime/" + showtimeId + "/"
+        );
+
+        socket.onmessage = function(e) {
+            const data = JSON.parse(e.data);
+            console.log("Seat update:", data);
+
+            const action = data.action;
+            const seats = data.seats;
+
+            seats.forEach(seatId => {
+                const seatDiv = document.getElementById("seat-" + seatId);
+                if (seatDiv) {
+                    seatDiv.classList.remove("reserved", "pending", "cancelled");
+
+                    if (action === "reserved") {
+                        seatDiv.classList.add("reserved");
+                    } else if (action === "pending") {
+                        seatDiv.classList.add("pending");
+                    } else if (action === "cancelled") {
+                        seatDiv.classList.add("cancelled");
+                    }
+                }
+            });
+        };
+    </script>
+</body>
+</html>
