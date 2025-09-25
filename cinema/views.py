@@ -98,16 +98,3 @@ class PaymentViewSet(ModelViewSet):
         payment = serializer.save(status='success')
         payment.reservation.status = 'confirmed'
         payment.reservation.save()
-
-
-@csrf_exempt
-def login_api(request):
-
-    if request.method == "POST":
-        username = request.POST.get("username")
-        password = request.POST.get("password")
-        user = authenticate(request, username=username, password=password)
-        if user:
-            login(request, user)
-            return JsonResponse({"detail": "Logged in"})
-        return JsonResponse({"detail": "Invalid credentials"}, status=400)
