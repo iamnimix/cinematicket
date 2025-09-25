@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'cinema',
     'rest_framework',
+    'account',
 ]
 
 MIDDLEWARE = [
@@ -156,3 +157,5 @@ CHANNEL_LAYERS = {
         "CONFIG": {"hosts": [("127.0.0.1", 6379)]},
     },
 }
+
+AUTH_USER_MODEL = 'account.CustomUser'
