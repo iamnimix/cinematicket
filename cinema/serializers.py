@@ -60,6 +60,11 @@ class ReservationSerializer(serializers.ModelSerializer):
         seats = validated_data.pop("seat")
         user = self.context["request"].user
         showtime = validated_data["show_time"]
+        ReservationSeat.objects.filter(
+            seat__in=seats,
+            show_time=showtime,
+            reservation__status="cancelled"
+        ).delete()
 
         # 🔒 قفل برای جلوگیری از race condition
         try:
@@ -72,7 +77,6 @@ class ReservationSerializer(serializers.ModelSerializer):
                 )
                 if reserved_seats.exists():
                     raise serializers.ValidationError("یکی از صندلی‌ها قبلاً رزرو شده است!")
-
                 reservation = Reservation.objects.create(user=user, **validated_data)
                 ReservationSeat.objects.bulk_create([
                     ReservationSeat(reservation=reservation, seat=seat, show_time=showtime)
@@ -88,3 +92,4 @@ class PaymentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Payment
         fields = "__all__"
+        read_only_fields = ('transaction_id',)
