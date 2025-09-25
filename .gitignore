@@ -208,3 +208,6 @@ __marimo__/
 .idea
 cinema/migrations
 account/migrations
+celerybeat-schedule
+celerybeat-schedule-shm
+celerybeat-schedule-wal
