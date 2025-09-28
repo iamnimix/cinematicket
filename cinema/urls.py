@@ -13,4 +13,4 @@ router.register(r'reserve', views.ReservationViewSet, basename='reserve')
 router.register(r'payment', views.PaymentViewSet, basename='payment')
 
 
-urlpatterns = [ path('', include(router.urls)), path("login/", views.login_api)]
+urlpatterns = [ path('', include(router.urls))]

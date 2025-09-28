@@ -211,3 +211,4 @@ account/migrations
 celerybeat-schedule
 celerybeat-schedule-shm
 celerybeat-schedule-wal
+dump.rdb
