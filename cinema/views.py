@@ -45,7 +45,7 @@ class ShowTimeViewSet(ReadOnlyModelViewSet):
     )
     def available_seats(self, request, pk=None):
         show_time = self.get_object()
-        available_seats = show_time.hall.seats.all()
+        available_seats = show_time.hall.seats.all().order_by("row", "number")
 
         if request.accepted_renderer.format == 'json':
             serializer = SeatSerializer(available_seats, many=True)
