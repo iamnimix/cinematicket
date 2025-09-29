@@ -1,3 +1,4 @@
+from django.core.validators import RegexValidator
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 
@@ -22,3 +23,31 @@ class UserSerializer(serializers.Serializer):
         user = User.objects.create(phone=phone, password=password)
         user.save()
         return user
+
+
+class LoginSerializer(serializers.Serializer):
+    phone = serializers.CharField(
+        required=True,
+        error_messages={
+            'required': 'Phone number required'
+        },
+        validators=[
+            RegexValidator(
+                regex=r'^09\d{9}$',
+                message='Phone number must be entered in the format: ',
+                code='invalid'
+            )
+        ]
+    )
+    def validate(self, attrs):
+        phone = attrs.get('phone')
+        user = User.objects.get(phone=phone)
+        attrs['user'] = user
+        return attrs
+
+    def validate_phone(self, value):
+        try:
+            user = User.objects.filter(phone=value).first()
+            return user.phone
+        except User.DoesNotExist:
+            raise serializers.ValidationError('Phone number not found!')
