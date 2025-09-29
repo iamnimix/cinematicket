@@ -51,3 +51,15 @@ class LoginSerializer(serializers.Serializer):
             return user.phone
         except User.DoesNotExist:
             raise serializers.ValidationError('Phone number not found!')
+
+
+
+class OtpVerificationSerializer(serializers.Serializer):
+    otp = serializers.CharField(
+        required=True,
+        validators=[
+            RegexValidator(
+                regex=r'^\d{4}$'
+            )
+        ]
+    )
