@@ -18,6 +18,7 @@ constantly==23.10.4
 cryptography==46.0.1
 daphne==4.2.1
 Django==5.2.6
+django-redis==6.0.0
 djangorestframework==3.16.1
 djangorestframework_simplejwt==5.5.1
 hyperlink==21.0.0
