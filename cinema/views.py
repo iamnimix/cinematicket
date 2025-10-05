@@ -1,3 +1,4 @@
+from OpenSSL.rand import status
 from django.contrib.auth import login, authenticate
 from django.db import transaction
 from django.http import JsonResponse
@@ -7,7 +8,7 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import action
 from rest_framework.renderers import TemplateHTMLRenderer, JSONRenderer
 from rest_framework.response import Response
-from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
+from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet, GenericViewSet, mixins
 from rest_framework.permissions import IsAuthenticated
 
 from channels.layers import get_channel_layer
@@ -65,7 +66,7 @@ class SeatViewSet(ReadOnlyModelViewSet):
     serializer_class = SeatSerializer
 
 
-class ReservationViewSet(ModelViewSet):
+class ReservationViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, mixins.RetrieveModelMixin, GenericViewSet):
     queryset = Reservation.objects.all()
     serializer_class = ReservationSerializer
     permission_classes = [IsAuthenticated]
