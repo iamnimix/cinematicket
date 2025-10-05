@@ -1,0 +1,70 @@
+version: '3.8'
+
+services:
+  server:
+    restart: unless-stopped
+    build: .
+    entrypoint: ./server-entrypoint.sh
+    volumes:
+      - static_volume:/app/static
+      - media_volume:/app/media
+    expose:
+      - 8000
+    depends_on:
+      - db
+
+  db:
+    restart: unless-stopped
+    image: postgres:15
+    environment:
+      - POSTGRES_USER=iamnimix
+      - POSTGRES_PASSWORD=iamnimix22
+      - POSTGRES_DB=cinematicket
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+
+  nginx:
+    restart: unless-stopped
+    image: nginx:alpine
+    volumes:
+      - static_volume:/app/static
+      - media_volume:/app/media
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    ports:
+      - "80:80"
+    depends_on:
+      - server
+
+  worker:
+    build: .
+    entrypoint: ./worker-entrypoint.sh
+    volumes:
+      - static_volume:/app/static
+      - media_volume:/app/media
+    depends_on:
+      - db
+      - redis
+
+  beat:
+    build: .
+    entrypoint: ./celery-beat-entrypoint.sh
+    volumes:
+      - static_volume:/app/static
+      - media_volume:/app/media
+    depends_on:
+      - db
+      - redis
+
+  redis:
+    restart: unless-stopped
+    image: redis
+    volumes:
+      - redis_data:/data
+    ports:
+      - '6379:6379'
+
+volumes:
+  static_volume: {}
+  media_volume: {}
+  postgres_data: {}
+  redis_data: {}
