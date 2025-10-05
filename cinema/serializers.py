@@ -69,14 +69,6 @@ class ReservationSerializer(serializers.ModelSerializer):
         # 🔒 قفل برای جلوگیری از race condition
         try:
             with transaction.atomic():
-                reserved_seats = ReservationSeat.objects.select_for_update().filter(
-                    seat__in=seats,
-                    show_time=showtime,
-                    reservation__status__in=["pending", "confirmed"],
-                    reservation__expires_at__gt=timezone.now()
-                )
-                if reserved_seats.exists():
-                    raise serializers.ValidationError("یکی از صندلی‌ها قبلاً رزرو شده است!")
                 reservation = Reservation.objects.create(user=user, **validated_data)
                 ReservationSeat.objects.bulk_create([
                     ReservationSeat(reservation=reservation, seat=seat, show_time=showtime)
