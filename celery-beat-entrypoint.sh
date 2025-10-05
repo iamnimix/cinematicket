@@ -1,0 +1,9 @@
+#!/bin/sh
+
+
+until cd /app
+do
+  echo "Waiting for server volume..."
+done
+
+python -m celery -A core beat -l info
