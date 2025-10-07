@@ -3,6 +3,8 @@ version: '3.8'
 services:
   server:
     restart: unless-stopped
+    env_file:
+      - .env.production
     build: .
     entrypoint: ./server-entrypoint.sh
     volumes:
@@ -36,6 +38,8 @@ services:
       - server
 
   worker:
+    env_file:
+      - .env.production
     build: .
     entrypoint: ./worker-entrypoint.sh
     volumes:
@@ -46,6 +50,8 @@ services:
       - redis
 
   beat:
+    env_file:
+      - .env.production
     build: .
     entrypoint: ./celery-beat-entrypoint.sh
     volumes:
