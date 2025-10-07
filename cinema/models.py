@@ -74,7 +74,7 @@ class Reservation(models.Model):
 
 
 class ReservationSeat(models.Model):
-    reservation = models.ForeignKey(Reservation, on_delete=models.CASCADE)
+    reservation = models.ForeignKey(Reservation, on_delete=models.CASCADE, null=True, blank=True)
     seat = models.ForeignKey(Seat, on_delete=models.CASCADE)
     show_time = models.ForeignKey(ShowTime, on_delete=models.CASCADE)
 
