@@ -19,7 +19,7 @@ https://github.com/iamnimix/cinematicket.git
 ```
 
 
-### After you created your ```.env``` file:
+### After you created your ```.env.production``` file:
 
 ```commandline
 DEBUG=False
