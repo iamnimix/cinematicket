@@ -4,14 +4,17 @@ from django.shortcuts import render
 from django.contrib.auth import get_user_model
 from django.core.cache import cache
 from rest_framework import status
-from rest_framework.generics import CreateAPIView
+from rest_framework.generics import CreateAPIView, RetrieveUpdateAPIView
 from rest_framework.response import Response
-from  rest_framework.viewsets import ViewSet
+from rest_framework.viewsets import ViewSet, GenericViewSet
+from rest_framework.mixins import UpdateModelMixin, RetrieveModelMixin
 from rest_framework.decorators import action
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework import permissions
 
-from .serializer import UserSerializer, LoginSerializer, OtpVerificationSerializer
+from .serializer import UserSerializer, LoginSerializer, OtpVerificationSerializer, ProfileSerializer
 from .tasks import send_otp
+from .custom_permission import IsOwner
 
 User = get_user_model()
 # Create your views here.
@@ -60,3 +63,9 @@ class OtpVerification(ViewSet):
             return Response(response, status=status.HTTP_200_OK)
         else:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+
+class ProfileViewSet(GenericViewSet, RetrieveModelMixin, UpdateModelMixin):
+    permission_classes = [permissions.IsAuthenticated, IsOwner]
+    queryset = User.objects.all()
+    serializer_class = ProfileSerializer
